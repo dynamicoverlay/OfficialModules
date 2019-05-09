@@ -1,0 +1,86 @@
+<div class="btn-group mb-3">
+    <button id="show_backdrop" class="btn btn-success">Show Backdrop</button>
+    <button id="hide_backdrop" class="btn btn-danger">Hide Backdrop</button>
+</div>
+<div class="input-group mb-3">
+    <input type="text" id="text" value="Be Right Back!" class="form-control" />
+    <div class="input-group-append">
+        <button id="update_text" class="btn btn-primary">Update Text</button>
+    </div>
+</div>
+<div class="input-group mb-3">
+    <input type="text" id="color" value="" class="form-control" />
+    <div class="input-group-append">
+        <button id="update_color" class="btn btn-primary">Update Color</button>
+    </div>
+</div>
+<div class="input-group mb-3">
+    <input type="number" id="transitionTime" value="" class="form-control" />
+    <div class="input-group-append">
+        <button id="update_transition" class="btn btn-primary">Update Transition Time</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    window.addEventListener('message', (e) => {
+        let data = e.data;
+        if (data.message === "fromSocket") {
+            let socketMessage = data.value;
+            if (socketMessage.message === "updateState") {
+                let state = socketMessage.value.backdrop;
+                document.getElementById("text").value = state.text;
+                document.getElementById("color").value = state.color;
+                document.getElementById("transitionTime").value = state.transitionTime;
+            }
+        }
+    })
+    document.getElementById("show_backdrop").addEventListener("click", () => {
+        sendSocket("doAction", {
+            type: 'backdrop',
+            value: {
+                type: 'slide-in'
+            }
+        });
+    });
+    document.getElementById("hide_backdrop").addEventListener("click", () => {
+        sendSocket("doAction", {
+            type: 'backdrop',
+            value: {
+                type: 'slide-out'
+            }
+        });
+    });
+    function sendUpdate(type, value) {
+        sendSocket("doAction", {
+            type: 'backdrop',
+            value: {
+                type: 'set-' + type,
+                value: value
+            }
+        });
+    }
+    document.getElementById("text").addEventListener("keydown", (e) => {
+        if (e.keyCode === 13) {
+            sendUpdate('text', document.getElementById("text").value);
+        }
+    })
+    document.getElementById("update_text").addEventListener("click", () => {
+        sendUpdate('text', document.getElementById("text").value);
+    });
+    document.getElementById("color").addEventListener("keydown", (e) => {
+        if (e.keyCode === 13) {
+            sendUpdate('color', document.getElementById("color").value);
+        }
+    })
+    document.getElementById("update_color").addEventListener("click", (e) => {
+        sendUpdate('color', document.getElementById("color").value);
+    })
+    document.getElementById("transitionTime").addEventListener("keydown", (e) => {
+        if (e.keyCode === 13) {
+            sendUpdate('color', document.getElementById("color").value);
+        }
+    })
+    document.getElementById("update_transition").addEventListener("click", (e) => {
+        sendUpdate('transition', document.getElementById("transitionTime").value);
+    })
+</script>

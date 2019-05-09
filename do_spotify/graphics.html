@@ -1,0 +1,54 @@
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        width: 1920px;
+        height: 1080px;
+    }
+    .spotify {
+            position: absolute;
+            bottom: 20px;
+            right:  20px;
+            transform: translateX(320px);
+            transition: transform ease 0.7s;
+            width: 300px;
+            height: 120px;
+            background-color: #2f3640;
+            color: #fff;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .in {
+            transform: translateX(0);
+            transition: transform ease 0.7s;
+        }
+        img {
+            margin: 0  10px;
+        }
+        .titles {
+            display: flex;
+            flex-direction: column;
+        }
+</style>
+
+<div class="spotify" id="spotify">
+    <img src="https://via.placeholder.com/100" id="image" width="100"/>
+    <div class="titles">
+        <h3 id="name">Song name</h2>
+        <h4 id="artist">Song Artist</h3>
+    </div>
+</div>
+<script text="text/javascript">
+    (function () {
+        window.addEventListener('message', (e) => {
+            let data = e.data;
+            if (data.message === "fromSocket") {
+                let socketMessage = data.value;
+                if (socketMessage.message === "updateState") {
+                    
+                }
+            }
+        })
+    })();
+</script>

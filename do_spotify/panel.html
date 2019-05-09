@@ -1,0 +1,47 @@
+<style>
+    .hide {
+        display: none !important;
+    }
+</style>
+
+<button class="btn btn-primary" id="authorize_spotify">Authorize Spotify</button>
+<img src="" id="song_image" width="200px">
+<p><span id="current_song"></span></p>
+<div class="input-group mb-3 ">
+    <input type="number" id="volume" class="form-control" />
+    <div class="input-group-append">
+        <button id="set_volume" class="btn btn-primary">Set Volume</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var spotifyAuthWindow = undefined;
+    window.addEventListener('message', (e) => {
+        let data = e.data;
+        if (data.message === "fromSocket") {
+            let socketMessage = data.value;
+            if (socketMessage.message === "updateState") {
+                let state = socketMessage.value.spotify;
+                if(state.token !== undefined && state.token !== ""){
+                    document.getElementById("authorize_spotify").classList.add("hide");
+                } else {
+                    document.getElementById("authorize_spotify").classList.remove("hide");
+                }
+                if(state.image){
+                    document.getElementById("song_image").src = state.image;
+                }
+                document.getElementById("current_song").innerHTML = state.song + " by " + state.artist;
+                if (!socketMessage.value.macros.recording) {
+                    document.getElementById("volume").value = state.volume;
+                }
+            } else if (socketMessage.message === "spotifyAuth") {
+                window.parent.postMessage({message: 'openWindow', value: "http://localhost:3001/spotify/login"})
+            } else if (socketMessage.message === "closeSAuth") {
+                window.parent.postMessage({message: 'closeWindow'})
+            }
+        }
+    })
+    document.getElementById("authorize_spotify").addEventListener("click", () => {
+        window.parent.postMessage({message: 'openWindow', value: "http://localhost:3001/spotify/login"})
+    })
+</script>
