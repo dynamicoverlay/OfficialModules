@@ -1,0 +1,20 @@
+<iframe class="embed-responsive-item" id="viewer_embed"
+src="https://player.twitch.tv/?channel=Rushmead&muted=true" width="100%" height="300"
+frameborder=""></iframe>
+
+<script type="text/javascript">
+    let username = "";
+     window.addEventListener('message', (e) => {
+        let data = e.data;
+        if (data.message === "fromSocket") {
+            let socketMessage = data.value;
+            if (socketMessage.message === "updateState") {
+                let state = socketMessage.value.twitch;
+                if(state.username !== username){
+                    username = state.username;
+                    document.getElementById("viewer_embed").setAttribute('src', 'https://player.twitch.tv/?channel='+ username + '&muted=true')
+                }
+            }
+        }
+    })
+</script>

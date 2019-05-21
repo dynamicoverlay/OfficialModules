@@ -1,0 +1,19 @@
+<iframe frameborder="0" scrolling="no" id="chat_embed" src="https://www.twitch.tv/embed/rushmead/chat?darkpopout"
+    height="500" width="100%">
+
+<script type="text/javascript">
+    let username = "";
+     window.addEventListener('message', (e) => {
+        let data = e.data;
+        if (data.message === "fromSocket") {
+            let socketMessage = data.value;
+            if (socketMessage.message === "updateState") {
+                let state = socketMessage.value.twitch;
+                if(state.username !== username){
+                    username = state.username;
+                    document.getElementById("chat_embed").setAttribute('src', 'https://www.twitch.tv/embed/'+ username + '/chat?darkpopout')
+                }
+            }
+        }
+    })
+</script>
