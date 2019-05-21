@@ -20,7 +20,6 @@ class SpotifyModule {
         registry.registerMessageHandler('spotify', this.handleMessages.bind(this));
         registry.registerConfig('spotify', {
             client_id: "",
-            client_secret: "",
             redirect_uri: "http://localhost:3001/spotify/redirect"
         })
         if (this.currentState.token && this.currentState.token !== "") {
