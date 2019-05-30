@@ -5,48 +5,86 @@
         width: 1920px;
         height: 1080px;
     }
+
     .spotify {
-            position: absolute;
-            bottom: 20px;
-            right:  20px;
-            transform: translateX(320px);
-            transition: transform ease 0.7s;
-            width: 300px;
-            height: 120px;
-            background-color: #2f3640;
-            color: #fff;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-        }
-        .in {
-            transform: translateX(0);
-            transition: transform ease 0.7s;
-        }
-        img {
-            margin: 0  10px;
-        }
-        .titles {
-            display: flex;
-            flex-direction: column;
-        }
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        transform: translateX(320px);
+        transition: transform ease 0.7s;
+        width: 300px;
+        height: 120px;
+        background-color: #2f3640;
+        color: #fff;
+        display: flex;
+        flex-direction: row;
+        font-family: 'Lato', sans-serif;
+        align-items: center;
+    }
+
+    .in {
+        transform: translateX(0);
+        transition: transform ease 0.7s;
+    }
+
+    img {
+        margin: 0 10px;
+    }
+
+    .titles {
+        display: flex;
+        flex-direction: column;
+    }
+
+    h3 {
+        margin-top: 0;
+        font-weight: 300;
+    }
+
+    h2 {
+        margin-bottom: 0;
+    }
 </style>
 
 <div class="spotify" id="spotify">
-    <img src="https://via.placeholder.com/100" id="image" width="100"/>
-    <div class="titles">
-        <h3 id="name">Song name</h2>
-        <h4 id="artist">Song Artist</h3>
+    <img src="https://via.placeholder.com/100" id="image" width="100" />
+    <div class="titles" id="titles">
+        <h2 id="name">Song name</h2>
+        <h3 id="artist">Song Artist</h3>
     </div>
 </div>
+<script src="/assets/jquery-3.2.1.min.js" crossorigin="anonymous">
+</script>
+<script type="text/javascript" src="/assets/jquery.fittext.js"></script>
 <script text="text/javascript">
+function resize_to_fit(outer, inner) {
+    while(inner.height() > outer.height()) {
+        var fontsize = parseInt(inner.css('font-size')) - 1;
+        inner.css('font-size', fontsize);
+        // some browsers(chrome) the min font return value is 12px
+        if(fontsize <= 1 || parseInt(inner.css('font-size')) >= fontsize+1)
+            break;
+    }
+}
+    let song = "";
     (function () {
         window.addEventListener('message', (e) => {
             let data = e.data;
             if (data.message === "fromSocket") {
                 let socketMessage = data.value;
                 if (socketMessage.message === "updateState") {
-                    
+                    let state = socketMessage.value.spotify;
+                    if (state.song !== song) {
+                        song = state.song;
+                        document.getElementById("name").innerHTML = state.song;
+                        document.getElementById("artist").innerHTML = state.artist;
+                        resize_to_fit($("#spotify"), $("#titles"));
+                        document.getElementById("image").setAttribute('src', state.image);
+                        document.getElementById("spotify").classList.add("in");
+                        setTimeout(() => {
+                            document.getElementById("spotify").classList.remove("in");
+                        }, 5000);
+                    }
                 }
             }
         })

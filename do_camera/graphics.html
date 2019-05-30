@@ -63,6 +63,7 @@
 <script text="text/javascript">
     var currentPosition = "bottom_left";
     var scale = 300;
+    var pageScale = {xSize: 1920, ySize: 1080};
     (function () {
         window.addEventListener('message', (e) => {
             let data = e.data;
@@ -80,6 +81,9 @@
                         document.getElementById("wrapper").classList.remove("show");
                     }
                 }
+            }else if(data.message === "setScale"){
+                document.body.style = "width: " + data.value.xSize + "px; height: " + data.value.ySize + "px;"
+                pageScale = data.value;
             }
         })
         navigator.getUserMedia = navigator.getUserMedia ||
@@ -120,33 +124,35 @@
         let wrap = scale + 50;
         let bottom = 0;
         let left = 0;
+        let xSize = pageScale.xSize;
+        let ySize = pageScale.ySize;
         if (position === "center") {
-            bottom = ((1080 - wrap) / 2);
-            left = ((1920 - wrap) / 2);
+            bottom = ((ySize - wrap) / 2);
+            left = ((xSize - wrap) / 2);
         } else if (position === "bottom_left") {
             bottom = 20;
             left = 20;
         } else if (position === "bottom_right") {
-            left = (1900 - wrap);
+            left = ((xSize - 20) - wrap);
             bottom = 20;
         } else if (position === "top_left") {
             left = 20;
-            bottom = (1060 - wrap);
+            bottom = ((ySize  - 20) - wrap);
         } else if (position === "top_right") {
-            left = (1900 - wrap);
-            bottom = (1060 - wrap);
+            left = ((xSize - 20) - wrap);
+            bottom = ((ySize - 20) - wrap);
         } else if (position === "top_middle") {
-            left = ((1920 - wrap) / 2);
-            bottom = (1060 - wrap);
+            left = ((xSize - wrap) / 2);
+            bottom = ((ySize - 20) - wrap);
         } else if (position === "bottom_middle") {
-            left = ((1920 - wrap) / 2);
+            left = ((xSize - wrap) / 2);
             bottom = 20;
         } else if (position === "left_middle") {
             left = 20;
-            bottom = ((1080 - wrap) / 2);
+            bottom = ((ySize - wrap) / 2);
         } else if (position === "right_middle") {
-            left = (1900 - wrap);
-            bottom = ((1080 - wrap) / 2);
+            left = ((xSize - 20) - wrap);
+            bottom = ((ySize - wrap) / 2);
         }
         return "width: " + wrap + "px; height: " + wrap + "px; bottom: " + bottom + "px; left: " + left + "px;";
     }

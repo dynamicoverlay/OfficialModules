@@ -4,7 +4,8 @@ class BackdropModule {
         this.currentState = this.getDefaultState();
     }
     
-    create(registry, app, io, config) {
+    create(registry, app, io, config, initialState) {
+        this.currentState = initialState;
         registry.registerPanel('backdrop/panel.html', 'Backdrop');
         registry.registerGraphic('backdrop/graphics.html', 'Backdrop');
         registry.registerMessageHandler('backdrop', this.handleMessages.bind(this));

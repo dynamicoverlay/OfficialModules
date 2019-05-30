@@ -9,14 +9,14 @@ class SpotifyModule {
         this.spotifyInterval = -1;
     }
 
-    create(registry, app, io, config, intialState, sendUpdate) {
-        if (intialState) {
-            this.currentState = intialState;
+    create(registry, app, io, config, initialState, sendUpdate) {
+        if (initialState) {
+            this.currentState = initialState;
         }
         this.sendUpdate = sendUpdate;
         this.io = io;
         registry.registerPanel('spotify/panel.html', 'Spotify');
-        // registry.registerGraphic('spotify/graphics.html', 'Spotify');
+        registry.registerGraphic('spotify/graphics.html', 'Spotify');
         registry.registerMessageHandler('spotify', this.handleMessages.bind(this));
         registry.registerConfig('spotify', {
             client_id: "",
@@ -58,7 +58,7 @@ class SpotifyModule {
                 <body>
                     <h1>Updating...</h1>
                     <script type="text/javascript">
-                        fetch('/spotify/update', {method: 'POST', headers: {'Content-Type': 'application/json'},body: JSON.stringify({data: document.location.hash})}).then((res) => res.json()).then(() => {window.open('', '_self', ''); window.close();})
+                        fetch('/spotify/update', {method: 'POST', headers: {'Content-Type': 'application/json'},body: JSON.stringify({data: document.location.hash})}).then((res) => res.json())
                     </script>
                 </body>
             </html>
@@ -132,8 +132,8 @@ class SpotifyModule {
                         spotify.song = response.item.name;
                         spotify.image = response.item.album.images[0].url;
                         let artistList = "";
-                        response.item.artists.forEach((artist) => {
-                            artistList += artist.name + ", ";
+                        response.item.artists.forEach((artist, i) => {
+                            artistList += artist.name + (i !== (response.item.artists.length -1 )? ", " : "");
                         });
                         spotify.artist = artistList;
                         this.currentState = spotify;

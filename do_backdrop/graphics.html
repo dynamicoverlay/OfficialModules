@@ -7,8 +7,8 @@
     }
     .backdrop {
         background-color: #2980b9;
-        height: 1080px;
-        width: 1920px;
+        height: 100%;
+        width: 100%;
         position: absolute;
         top: -1080px;
         transition: top 5s;
@@ -47,6 +47,8 @@
                     }
                     document.getElementById("backdrop-text").innerHTML = state.text;
                 }
+            }else if(data.message === "setScale"){
+                document.body.style = "width: " + data.value.xSize + "px; height: " + data.value.ySize + "px;"
             }
         })
     })();
