@@ -6,7 +6,9 @@ class CameraModule {
     }
     
     create(registry, app, io, config, initialState) {
-        this.currentState = initialState;
+        if (initialState) {
+            this.currentState = initialState;
+        }
         registry.registerPanel('camera/panel.html', 'Camera');
         registry.registerGraphic('camera/graphics.html', 'Camera');
         registry.registerMessageHandler('camera', this.handleMessages.bind(this));

@@ -1,0 +1,31 @@
+<ul id="events">
+</ul>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script type="text/javascript">
+    let username = "";
+     window.addEventListener('message', (e) => {
+        let data = e.data;
+        if (data.message === "fromSocket") {
+            let socketMessage = data.value;
+            if (socketMessage.message === "updateState") {
+                let state = socketMessage.value.twitch;
+                if (state.events) {
+                    let listLI = "";
+                    let now = new moment();
+                    state.events.sort((a, b) => +moment(b.created_at) - +moment(a.created_at)).forEach((event) => {
+                        let time = new moment(event.created_at)
+                        let duration = moment.duration(time.diff(now));
+                        listLI += "<li>" + event.username + (event.type === "follow" ? ' followed' :
+                            ' did something') + " - " + duration.humanize(true) + "</li>";
+                    })
+                    document.getElementById("events").innerHTML = listLI;
+                }
+            } else if(socketMessage.message === "twitchLogin"){
+                window.parent.postMessage({
+                    message: 'openWindow',
+                    value: "http://localhost:3001/twitch/login"
+                })
+            }
+        }
+    })
+</script>

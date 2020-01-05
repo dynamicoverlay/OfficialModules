@@ -27,8 +27,12 @@
         transform: scale(0) rotate(-1000deg);
     }
 
+    .square {
+        border-radius: 0;
+    }        
+
     .penis {
-        border-radius: 0 !important;        
+        border-radius: 0 !important;
         -webkit-clip-path: polygon(36% 99%, 24% 96%, 16% 82%, 17% 72%, 25% 65%, 33% 60%, 35% 30%, 32% 24%, 34% 17%, 37% 7%, 44% 3%, 52% 2%, 61% 6%, 65% 17%, 67% 25%, 64% 32%, 66% 59%, 73% 63%, 79% 67%, 82% 73%, 84% 80%, 80% 93%, 66% 98%, 56% 98%, 50% 97%);
         clip-path: polygon(36% 99%, 24% 96%, 16% 82%, 17% 72%, 25% 65%, 33% 60%, 35% 30%, 32% 24%, 34% 17%, 37% 7%, 44% 3%, 52% 2%, 61% 6%, 65% 17%, 67% 25%, 64% 32%, 66% 59%, 73% 63%, 79% 67%, 82% 73%, 84% 80%, 80% 93%, 66% 98%, 56% 98%, 50% 97%);
     }
@@ -57,21 +61,20 @@
         transform: scale(0) rotate(1000deg);
     }
 </style>
-<div class="border-wrap" id="wrapper">
-    <video autoplay="true" id="videoElement" class="circle-video"></video>
+<div class="border-wrap " id="wrapper">
+    <video autoplay="true" id="videoElement" class=""></video>
 </div>
 <script text="text/javascript">
     var currentPosition = "bottom_left";
     var scale = 300;
     var pageScale = {xSize: 1920, ySize: 1080};
-    (function () {
+    (async function () {
         window.addEventListener('message', (e) => {
             let data = e.data;
             if (data.message === "fromSocket") {
                 let socketMessage = data.value;
                 if (socketMessage.message === "updateState") {
-                    let state = socketMessage.value.camera;
-                    console.log(state);
+                    let state = socketMessage.value.camera
                     currentPosition = state.position;
                     scale = state.scale;
                     scaleUp(scale);
@@ -97,19 +100,47 @@
         var video = document.querySelector("#videoElement");
 
         function getWebcam() {
-
-            navigator.getUserMedia({
+            navigator.mediaDevices.getUserMedia({
                 video: true,
-                audio: false
-            }, function (stream) {
-                video.srcObject = stream;
-            }, function (e) {
-                console.error('Rejected!', e);
-            });
+                audio: false,
+            }).then(async (stream) => {
+                let id = await getIDForCamera('HD Pro Webcam C920');
+                console.log("ID is " + id);
+                if(id){
+                    navigator.mediaDevices.getUserMedia({
+                        video: {deviceId: id},
+                        audio: false,
+                    }).then((actualStream) => {
+                        video.srcObject = actualStream;
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
         }
 
         getWebcam();
     })();
+    
+    async function getIDForCamera(label){
+        return await navigator.mediaDevices.getUserMedia({video:true, audio:false})
+        .then(stream => 
+            navigator.mediaDevices
+            .enumerateDevices()
+            .then(devices => {
+            return devices
+            })
+            .catch(err => {throw err})
+        )
+        .then(devices => {
+            const faceTimeCam = devices.find(device => 
+                device.kind === 'videoinput' && device.label.indexOf(label) !== -1);
+            return (faceTimeCam && faceTimeCam.deviceId) || undefined;
+        })
+        .catch(err => console.error(err))
+    }
 
     function scaleUp(newCircleSize) {
         let wrap = newCircleSize + 50;

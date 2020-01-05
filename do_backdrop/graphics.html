@@ -10,8 +10,8 @@
         height: 100%;
         width: 100%;
         position: absolute;
-        top: -1080px;
-        transition: top 5s;
+        transform: translate(0%, -100%);
+        transition: all 5s;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -24,7 +24,7 @@
     }
 
     .backdrop.animate-in {
-        top: 0;
+        transform: translate(0%, 0%);
     }
 </style>
 
@@ -39,7 +39,11 @@
                 let socketMessage = data.value;
                 if (socketMessage.message === "updateState") {
                     let state = socketMessage.value.backdrop;
-                    document.getElementById("backdrop").style = "transition: top " + state.transitionTime + "s; background-color: " +state.color + ";"
+                    if(!state.backgroundImage){
+                        document.getElementById("backdrop").style = "transition: all " + state.transitionTime + "s; background-color: " +state.color + ";"
+                    } else {
+                        document.getElementById("backdrop").style = "transition: all " + state.transitionTime + "s; background-image: url(" +state.backgroundImage + ");"
+                    }
                     if (state.visible) {
                         document.getElementById("backdrop").classList.add("animate-in");
                     } else {

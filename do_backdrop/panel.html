@@ -15,6 +15,12 @@
     </div>
 </div>
 <div class="input-group mb-3">
+    <input type="text" id="image" value="" class="form-control" />
+    <div class="input-group-append">
+        <button id="update_image" class="btn btn-primary">Update Image</button>
+    </div>
+</div>
+<div class="input-group mb-4">
     <input type="number" id="transitionTime" value="" class="form-control" />
     <div class="input-group-append">
         <button id="update_transition" class="btn btn-primary">Update Transition Time</button>
@@ -30,6 +36,7 @@
                 let state = socketMessage.value.backdrop;
                 document.getElementById("text").value = state.text;
                 document.getElementById("color").value = state.color;
+                document.getElementById("image").value = state.backgroundImage;
                 document.getElementById("transitionTime").value = state.transitionTime;
             }
         }
@@ -74,6 +81,9 @@
     })
     document.getElementById("update_color").addEventListener("click", (e) => {
         sendUpdate('color', document.getElementById("color").value);
+    })
+    document.getElementById("update_image").addEventListener("click", (e) => {
+        sendUpdate('background', document.getElementById("image").value);
     })
     document.getElementById("transitionTime").addEventListener("keydown", (e) => {
         if (e.keyCode === 13) {

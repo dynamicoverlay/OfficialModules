@@ -5,7 +5,9 @@ class BackdropModule {
     }
     
     create(registry, app, io, config, initialState) {
-        this.currentState = initialState;
+        if (initialState) {
+            this.currentState = initialState;
+        }
         registry.registerPanel('backdrop/panel.html', 'Backdrop');
         registry.registerGraphic('backdrop/graphics.html', 'Backdrop');
         registry.registerMessageHandler('backdrop', this.handleMessages.bind(this));
@@ -17,7 +19,8 @@ class BackdropModule {
             visible: true,
             transitionTime: 5,
             text: "Starting Soon!",
-            color: "#2980b9"
+            color: "#2980b9",
+            backgroundImage: undefined
         }
     }
 
@@ -27,11 +30,13 @@ class BackdropModule {
         } else if(data.type === "slide-out"){
             this.currentState.visible = false;
         } else if(data.type === "set-text"){
-            this.currentState.text= data.value;
+            this.currentState.text = data.value;
         } else if(data.type === "set-color"){
             this.currentState.color = data.value;
-        }else if(data.type === "set-transition"){
+        } else if(data.type === "set-transition"){
             this.currentState.transitionTime = data.value;
+        } else if(data.type === "set-background"){
+            this.currentState.backgroundImage = data.value;
         }
         return Promise.resolve();
     }
